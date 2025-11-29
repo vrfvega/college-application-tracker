@@ -49,14 +49,14 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
+  --primary: oklch(0.55 0.22 250);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
+  --secondary-foreground: oklch(0.145 0 0);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --accent: oklch(0.96 0 0);
+  --accent-foreground: oklch(0.145 0 0);
   --destructive: oklch(0.577 0.245 27.325);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
@@ -116,5 +116,179 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: oklch(0.922 0 0);
+    border-radius: 3px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: oklch(0.708 0 0);
+  }
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: oklch(1 0 0 / 20%);
+  }
+  .dark .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background-color: oklch(1 0 0 / 30%);
+  }
+
+  /* Liquid Glass / Frosted Glass Effects */
+  .glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+  }
+
+  .glass,
+  .glass h1,
+  .glass h2,
+  .glass h3,
+  .glass h4,
+  .glass h5,
+  .glass h6,
+  .glass p,
+  .glass span:not(.text-muted-foreground):not(.text-destructive):not(.text-primary) {
+    color: oklch(0.145 0 0);
+  }
+
+  .dark .glass {
+    background: rgba(30, 30, 30, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .dark .glass,
+  .dark .glass h1,
+  .dark .glass h2,
+  .dark .glass h3,
+  .dark .glass h4,
+  .dark .glass h5,
+  .dark .glass h6,
+  .dark .glass p,
+  .dark .glass span:not(.text-muted-foreground):not(.text-destructive):not(.text-primary) {
+    color: oklch(0.985 0 0);
+  }
+
+  .glass-strong {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(30px) saturate(180%);
+    -webkit-backdrop-filter: blur(30px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+  }
+
+  .glass-strong,
+  .glass-strong h1,
+  .glass-strong h2,
+  .glass-strong h3,
+  .glass-strong h4,
+  .glass-strong h5,
+  .glass-strong h6,
+  .glass-strong p,
+  .glass-strong span:not(.text-muted-foreground):not(.text-destructive):not(.text-primary) {
+    color: oklch(0.145 0 0);
+  }
+
+  .dark .glass-strong {
+    background: rgba(20, 20, 20, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .dark .glass-strong,
+  .dark .glass-strong h1,
+  .dark .glass-strong h2,
+  .dark .glass-strong h3,
+  .dark .glass-strong h4,
+  .dark .glass-strong h5,
+  .dark .glass-strong h6,
+  .dark .glass-strong p,
+  .dark .glass-strong span:not(.text-muted-foreground):not(.text-destructive):not(.text-primary) {
+    color: oklch(0.985 0 0);
+  }
+
+  .glass-subtle {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px) saturate(180%);
+    -webkit-backdrop-filter: blur(10px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  .glass-subtle,
+  .glass-subtle h1,
+  .glass-subtle h2,
+  .glass-subtle h3,
+  .glass-subtle h4,
+  .glass-subtle h5,
+  .glass-subtle h6,
+  .glass-subtle p,
+  .glass-subtle span:not(.text-muted-foreground):not(.text-destructive):not(.text-primary) {
+    color: oklch(0.145 0 0);
+  }
+
+  .dark .glass-subtle {
+    background: rgba(40, 40, 40, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .dark .glass-subtle,
+  .dark .glass-subtle h1,
+  .dark .glass-subtle h2,
+  .dark .glass-subtle h3,
+  .dark .glass-subtle h4,
+  .dark .glass-subtle h5,
+  .dark .glass-subtle h6,
+  .dark .glass-subtle p,
+  .dark .glass-subtle span:not(.text-muted-foreground):not(.text-destructive):not(.text-primary) {
+    color: oklch(0.985 0 0);
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+  }
+
+  .glass-card,
+  .glass-card h1,
+  .glass-card h2,
+  .glass-card h3,
+  .glass-card h4,
+  .glass-card h5,
+  .glass-card h6,
+  .glass-card p,
+  .glass-card time,
+  .glass-card span:not(.text-muted-foreground):not(.text-destructive):not(.text-primary) {
+    color: oklch(0.145 0 0);
+  }
+
+  .dark .glass-card {
+    background: rgba(30, 30, 30, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  .dark .glass-card,
+  .dark .glass-card h1,
+  .dark .glass-card h2,
+  .dark .glass-card h3,
+  .dark .glass-card h4,
+  .dark .glass-card h5,
+  .dark .glass-card h6,
+  .dark .glass-card p,
+  .dark .glass-card time,
+  .dark .glass-card span:not(.text-muted-foreground):not(.text-destructive):not(.text-primary) {
+    color: oklch(0.985 0 0);
   }
 }

@@ -1,4 +1,5 @@
 import React from 'react'
+import { TrackedDeadlinesProviderWrapper } from '@/components/providers/tracked-deadlines-provider'
 import './globals.css'
 
 export const metadata = {
@@ -10,9 +11,11 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
   const { children } = props
 
   return (
-    <html lang="en">
-      <body>
-        <main>{children}</main>
+    <html lang="en" suppressHydrationWarning>
+      <body suppressHydrationWarning>
+        <TrackedDeadlinesProviderWrapper>
+          <main>{children}</main>
+        </TrackedDeadlinesProviderWrapper>
       </body>
     </html>
   )
