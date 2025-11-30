@@ -86,7 +86,6 @@ export function LoginCard() {
       </CardContent>
       <CardFooter className="flex flex-col gap-2 text-xs text-muted-foreground">
         <p>By continuing you agree to share your name and email with this application.</p>
-        <p>You can update your data-sharing preferences anytime inside the dashboard.</p>
       </CardFooter>
     </Card>
   )

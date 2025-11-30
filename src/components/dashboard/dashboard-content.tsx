@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Calendar, ExternalLink, GraduationCap, Plus, X, Bell } from 'lucide-react'
+import { Calendar, ExternalLink, GraduationCap, Plus, X, Bell, CalendarClock } from 'lucide-react'
 
 import { InstitutionSearchDialog } from '@/components/dashboard/institution-search-dialog'
 import { ReminderConfigDialog } from '@/components/dashboard/reminder-config-dialog'
@@ -112,29 +112,20 @@ export function DashboardContent({ userEmail }: { userEmail?: string | null }) {
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <GraduationCap className="h-8 w-8 text-primary" />
               <h1 className="text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
                 Application Deadlines
               </h1>
-            </div>
             <Button onClick={() => setIsSearchDialogOpen(true)} size="lg" variant="default" className="gap-2">
               <Plus className="h-5 w-5" />
               Add Institution
             </Button>
           </div>
-          <p className="text-muted-foreground">
-            {userEmail ? `Welcome back, ${userEmail}. ` : ''}
-            {trackedDeadlines.length === 0
-              ? 'Get started by adding deadlines to track.'
-              : `Tracking ${trackedDeadlines.length} deadline${trackedDeadlines.length !== 1 ? 's' : ''}.`}
-          </p>
         </div>
 
         {trackedDeadlines.length === 0 ? (
           <Card className="glass-card border-dashed transition-all duration-300 hover:shadow-xl">
             <CardHeader className="text-center">
-              <GraduationCap className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
+              <CalendarClock className="mx-auto h-12 w-12 text-muted-foreground mb-4" />
               <CardTitle>No Deadlines Tracked</CardTitle>
               <CardDescription>
                 Start tracking application deadlines by searching for institutions and selecting deadlines.
