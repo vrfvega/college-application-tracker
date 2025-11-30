@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react'
 import { Bell, Loader2 } from 'lucide-react'
+import { toast } from 'sonner'
 import { useTrackedDeadlines, type TrackedDeadline } from '@/contexts/tracked-deadlines-context'
 
 import { Button } from '@/components/ui/button'
@@ -23,21 +24,11 @@ interface ReminderConfigDialogProps {
   onOpenChange: (open: boolean) => void
 }
 
-export function ReminderConfigDialog({
-  deadline,
-  open,
-  onOpenChange,
-}: ReminderConfigDialogProps) {
+export function ReminderConfigDialog({ deadline, open, onOpenChange }: ReminderConfigDialogProps) {
   const { updateDeadline } = useTrackedDeadlines()
-  const [reminderEnabled, setReminderEnabled] = useState(
-    deadline.reminderEnabled ?? false,
-  )
-  const [reminderDaysBefore, setReminderDaysBefore] = useState(
-    deadline.reminderDaysBefore ?? 7,
-  )
-  const [daysInputValue, setDaysInputValue] = useState(
-    String(deadline.reminderDaysBefore ?? 7),
-  )
+  const [reminderEnabled, setReminderEnabled] = useState(deadline.reminderEnabled ?? false)
+  const [reminderDaysBefore, setReminderDaysBefore] = useState(deadline.reminderDaysBefore ?? 7)
+  const [daysInputValue, setDaysInputValue] = useState(String(deadline.reminderDaysBefore ?? 7))
   const [isSaving, setIsSaving] = useState(false)
 
   // Update local state when deadline changes
@@ -64,33 +55,106 @@ export function ReminderConfigDialog({
 
     setIsSaving(true)
     try {
-      const finalDaysBefore = reminderEnabled
-        ? parseInt(daysInputValue, 10)
-        : undefined
+      const finalDaysBefore = reminderEnabled ? parseInt(daysInputValue, 10) : undefined
 
       updateDeadline(deadline.deadlineId, {
         reminderEnabled,
         reminderDaysBefore: finalDaysBefore,
       })
 
-      // Sync with backend (optional - works even if backend fails)
-      // This allows future backend storage of reminder preferences
-      fetch('/api/reminders/update', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          deadlineId: deadline.deadlineId,
-          reminderEnabled,
-          reminderDaysBefore: finalDaysBefore,
-        }),
-      }).catch((error) => {
-        // Silently fail - settings are saved in localStorage anyway
-        console.debug('Backend sync optional:', error)
-      })
+      // Sync with backend and send test email via Resend
+      try {
+        const response = await fetch('/api/reminders/update', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            deadlineId: deadline.deadlineId,
+            reminderEnabled,
+            reminderDaysBefore: finalDaysBefore,
+            deadlineTitle: deadline.title,
+            institutionName: deadline.institutionName,
+            deadlineDate: deadline.date,
+            institutionWebsite: deadline.institutionWebsite,
+          }),
+        })
+
+        const data = await response.json()
+
+        if (response.ok && data.success) {
+          if (reminderEnabled) {
+            if (data.emailSent) {
+              toast.success('Reminder scheduled! Confirmation sent.', {
+                description: `Check your inbox for confirmation. You'll receive a reminder ${finalDaysBefore} day${finalDaysBefore !== 1 ? 's' : ''} before the deadline.`,
+              })
+            } else {
+              toast.success('Reminder scheduled', {
+                description: `You'll receive a reminder email ${finalDaysBefore} day${finalDaysBefore !== 1 ? 's' : ''} before the deadline.`,
+              })
+            }
+          } else {
+            // Reminder disabled - send unsubscribe confirmation
+            try {
+              const unsubscribeResponse = await fetch('/api/reminders/unsubscribe', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  deadlineId: deadline.deadlineId,
+                  deadlineTitle: deadline.title,
+                }),
+              })
+
+              if (unsubscribeResponse.ok) {
+                toast.success('Reminders disabled and confirmation sent', {
+                  description:
+                    'Check your inbox for confirmation. You will no longer receive email reminders for this deadline.',
+                })
+              } else {
+                toast.success('Email reminders disabled', {
+                  description: 'You will no longer receive email reminders for this deadline.',
+                })
+              }
+            } catch (error) {
+              console.error('Error sending unsubscribe confirmation:', error)
+              toast.success('Email reminders disabled', {
+                description: 'You will no longer receive email reminders for this deadline.',
+              })
+            }
+          }
+        } else {
+          // Handle specific error cases
+          if (data.error === 'RESEND_NOT_CONFIGURED' || data.error === 'EMAIL_SEND_FAILED') {
+            toast.error('Resend not configured', {
+              description:
+                'Please set up Resend API key in your environment variables. Check RESEND_SETUP.md for instructions.',
+            })
+            // Settings still saved locally even if email fails
+            setIsSaving(false)
+            return // Don't close dialog on error, let user see the error
+          }
+
+          // Settings saved locally, but backend sync failed
+          toast.warning('Settings saved locally', {
+            description: reminderEnabled
+              ? `Email reminder scheduled (${finalDaysBefore} day${finalDaysBefore !== 1 ? 's' : ''} before), but couldn't verify email service.`
+              : 'Email reminders disabled.',
+          })
+        }
+      } catch (error) {
+        // Settings saved locally, but backend sync failed
+        console.error('Backend sync error:', error)
+        toast.warning('Settings saved locally', {
+          description: reminderEnabled
+            ? `Email reminder scheduled (${finalDaysBefore} day${finalDaysBefore !== 1 ? 's' : ''} before), but couldn't verify email service.`
+            : 'Email reminders disabled.',
+        })
+      }
 
       onOpenChange(false)
     } catch (error) {
       console.error('Error saving reminder settings:', error)
+      toast.error('Failed to save reminder settings', {
+        description: 'There was an error saving your reminder preferences. Please try again.',
+      })
     } finally {
       setIsSaving(false)
     }
@@ -147,7 +211,7 @@ export function ReminderConfigDialog({
                           const inputValue = e.target.value
                           // Allow empty string or any input while typing
                           setDaysInputValue(inputValue)
-                          
+
                           // Parse and validate only if it's a valid number
                           if (inputValue !== '') {
                             const value = parseInt(inputValue, 10)
@@ -265,4 +329,3 @@ export function ReminderConfigDialog({
     </Dialog>
   )
 }
-

@@ -1,5 +1,6 @@
 import React from 'react'
 import { TrackedDeadlinesProviderWrapper } from '@/components/providers/tracked-deadlines-provider'
+import { Toaster } from '@/components/ui/sonner'
 import './globals.css'
 
 export const metadata = {
@@ -15,6 +16,7 @@ export default async function RootLayout(props: { children: React.ReactNode }) {
       <body suppressHydrationWarning>
         <TrackedDeadlinesProviderWrapper>
           <main>{children}</main>
+          <Toaster />
         </TrackedDeadlinesProviderWrapper>
       </body>
     </html>
