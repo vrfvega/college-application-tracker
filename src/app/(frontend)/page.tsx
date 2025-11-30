@@ -16,7 +16,15 @@ export default async function HomePage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 via-blue-50/30 to-purple-50/20 p-4 dark:from-slate-950 dark:via-blue-950/20 dark:to-purple-950/10">
+    <main className="relative flex min-h-screen items-center justify-center p-4 selection:bg-primary/20">
+      {/* Elegant Background */}
+      <div className="fixed inset-0 -z-10 h-full w-full overflow-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#0a0a0a] to-black">
+        {/* Subtle accent lights */}
+        <div className="absolute -left-[10%] -top-[10%] h-[600px] w-[600px] rounded-full bg-indigo-500/5 blur-[120px]" />
+        <div className="absolute -right-[10%] top-[20%] h-[500px] w-[500px] rounded-full bg-blue-500/5 blur-[120px]" />
+        <div className="absolute bottom-0 left-[20%] h-[500px] w-[500px] rounded-full bg-slate-500/5 blur-[100px]" />
+      </div>
+
       <div className="w-full max-w-md">
         <LoginCard />
       </div>

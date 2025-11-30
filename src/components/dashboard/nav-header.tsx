@@ -30,8 +30,8 @@ export function NavHeader({ userEmail }: NavHeaderProps) {
   }, [router])
 
   return (
-    <header className="sticky top-0 z-50 w-full glass-strong border-b/50 shadow-sm">
-      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-4 z-50 w-full px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between rounded-xl glass-card px-6 shadow-2xl transition-all duration-300 hover:shadow-3xl">
         <div className="flex items-center gap-2">
           <GraduationCap className="h-5 w-5 text-primary" />
           <span className="font-semibold">College Application Tracker</span>
