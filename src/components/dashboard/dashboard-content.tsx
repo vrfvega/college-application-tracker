@@ -16,14 +16,6 @@ interface Deadline {
   id?: string | null
 }
 
-interface InstitutionData {
-  id: number
-  name: string
-  website: string
-  timezone: string
-  deadlines?: Deadline[] | null
-}
-
 interface DeadlineWithInstitution extends Deadline {
   institution: {
     id: number
@@ -70,7 +62,7 @@ function getDeadlineStatus(daysUntil: number): {
   return { label: 'Future', variant: 'outline' }
 }
 
-export function DashboardContent({ userEmail }: { userEmail?: string | null }) {
+export function DashboardContent() {
   const [isSearchDialogOpen, setIsSearchDialogOpen] = useState(false)
   const [reminderConfigDeadline, setReminderConfigDeadline] = useState<string | null>(null)
   const { trackedDeadlines, removeDeadline, isLoading: isLoadingTracked } = useTrackedDeadlines()

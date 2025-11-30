@@ -2,7 +2,7 @@
 
 import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
-import { CheckCircle2, Loader2, Mail, XCircle } from 'lucide-react'
+import { CheckCircle2, Loader2, XCircle } from 'lucide-react'
 import { useTrackedDeadlines } from '@/contexts/tracked-deadlines-context'
 
 import { Button } from '@/components/ui/button'
@@ -14,7 +14,6 @@ function UnsubscribeContent() {
   const { trackedDeadlines, updateDeadline } = useTrackedDeadlines()
   const [status, setStatus] = useState<'loading' | 'success' | 'error'>('loading')
   const [message, setMessage] = useState('')
-  const [unsubscribedAll, setUnsubscribedAll] = useState(false)
 
   useEffect(() => {
     const email = searchParams.get('email')
@@ -37,7 +36,6 @@ function UnsubscribeContent() {
               reminderEnabled: false,
             })
           })
-          setUnsubscribedAll(true)
           setMessage('You have been unsubscribed from all email reminders.')
         } else {
           // Find and disable the specific deadline reminder

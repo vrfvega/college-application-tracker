@@ -71,42 +71,49 @@ export async function sendReminderEmail(data: ReminderEmailData): Promise<boolea
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
         </head>
-        <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 8px 8px 0 0; text-align: center;">
-            <h1 style="color: white; margin: 0; font-size: 24px;">🎓 Application Deadline Reminder</h1>
-          </div>
-          <div style="background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb;">
-            <p style="font-size: 16px; margin-bottom: 20px;">
-              This is a reminder that <strong style="color: #667eea;">${data.deadlineTitle}</strong> for <strong>${data.institutionName}</strong> is due in <strong style="color: #ef4444;">${data.daysUntil} day${data.daysUntil !== 1 ? 's' : ''}</strong>.
-            </p>
+        <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #d4d4d8; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #000000;">
+          <div style="background: radial-gradient(ellipse at top, #171717, #0a0a0a); padding: 40px 30px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);">
             
-            <div style="background: white; padding: 20px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #667eea;">
-              <p style="margin: 0; font-size: 14px; color: #6b7280;">Deadline Date</p>
-              <p style="margin: 5px 0 0 0; font-size: 18px; font-weight: 600; color: #111827;">${deadlineDate}</p>
+            <div style="text-align: center; margin-bottom: 40px;">
+               <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.025em;">
+                Application Deadline Reminder
+              </h1>
+            </div>
+
+            <div style="text-align: center; margin-bottom: 40px;">
+              <p style="font-size: 17px; margin-bottom: 0; color: #d4d4d8; line-height: 1.6;">
+                This is a reminder that <strong style="color: #ffffff;">${data.deadlineTitle}</strong> for <strong>${data.institutionName}</strong> is due in <strong style="color: #ffffff;">${data.daysUntil} day${data.daysUntil !== 1 ? 's' : ''}</strong>.
+              </p>
+            </div>
+            
+            <div style="background: rgba(255, 255, 255, 0.03); padding: 24px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px; border-left: 4px solid #ffffff;">
+              <p style="margin: 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #71717a; font-weight: 500;">Deadline Date</p>
+              <p style="margin: 6px 0 0 0; font-size: 20px; font-weight: 600; color: #fafafa;">${deadlineDate}</p>
             </div>
             
             ${
               data.institutionWebsite
                 ? `
-              <div style="margin: 25px 0;">
-                <a href="${data.institutionWebsite}" style="display: inline-block; background: #667eea; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 500;">Visit Institution Website</a>
+              <div style="margin: 40px 0; text-align: center;">
+                <a href="${data.institutionWebsite}" style="display: inline-block; background: #ffffff; color: #000000; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px; transition: all 0.2s; box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);">Visit Institution Website</a>
               </div>
             `
                 : ''
             }
             
-            <p style="font-size: 14px; color: #6b7280; margin-top: 25px;">
+            <p style="font-size: 14px; color: #71717a; margin-top: 40px; text-align: center;">
               Don't forget to submit your application on time! Good luck! 🍀
             </p>
-          </div>
-          <div style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-            <p style="font-size: 12px; color: #9ca3af; margin-bottom: 8px;">
-              This email was sent from College Application Tracker
-            </p>
-            <p style="font-size: 11px; color: #9ca3af;">
-              <a href="${appUrl}/reminders/unsubscribe?email=${encodeURIComponent(data.to)}&deadlineId=${encodeURIComponent(data.deadlineTitle)}" style="color: #6b7280; text-decoration: underline;">Unsubscribe from this reminder</a> | 
-              <a href="${appUrl}/dashboard" style="color: #6b7280; text-decoration: underline;">Manage all reminders</a>
-            </p>
+            
+            <div style="margin-top: 50px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center;">
+              <p style="font-size: 12px; color: #52525b; margin-bottom: 12px;">
+                This email was sent from College Application Tracker
+              </p>
+              <p style="font-size: 11px; color: #52525b;">
+                <a href="${appUrl}/reminders/unsubscribe?email=${encodeURIComponent(data.to)}&deadlineId=${encodeURIComponent(data.deadlineTitle)}" style="color: #71717a; text-decoration: underline;">Unsubscribe from this reminder</a> | 
+                <a href="${appUrl}/dashboard" style="color: #71717a; text-decoration: underline;">Manage all reminders</a>
+              </p>
+            </div>
           </div>
         </body>
       </html>
@@ -171,48 +178,55 @@ export async function sendReminderConfirmationEmail(data: ConfirmationEmailData)
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
         </head>
-        <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 8px 8px 0 0; text-align: center;">
-            <h1 style="color: white; margin: 0; font-size: 24px;">✅ Reminder Scheduled</h1>
-          </div>
-          <div style="background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb;">
-            <p style="font-size: 16px; margin-bottom: 20px;">
-              Your email reminder has been successfully scheduled for <strong style="color: #667eea;">${data.deadlineTitle}</strong> at <strong>${data.institutionName}</strong>.
-            </p>
+        <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #d4d4d8; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #000000;">
+          <div style="background: radial-gradient(ellipse at top, #171717, #0a0a0a); padding: 40px 30px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);">
             
-            <div style="background: white; padding: 20px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #10b981;">
-              <p style="margin: 0; font-size: 14px; color: #6b7280;">You'll receive a reminder email on</p>
-              <p style="margin: 5px 0 0 0; font-size: 18px; font-weight: 600; color: #111827;">${reminderDateFormatted}</p>
-              <p style="margin: 5px 0 0 0; font-size: 14px; color: #6b7280;">(${data.reminderDaysBefore} day${data.reminderDaysBefore !== 1 ? 's' : ''} before the deadline)</p>
+            <div style="text-align: center; margin-bottom: 40px;">
+               <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.025em;">
+                Reminder Scheduled
+              </h1>
             </div>
 
-            <div style="background: white; padding: 20px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #667eea;">
-              <p style="margin: 0; font-size: 14px; color: #6b7280;">Application Deadline</p>
-              <p style="margin: 5px 0 0 0; font-size: 18px; font-weight: 600; color: #111827;">${deadlineDate}</p>
+            <div style="text-align: center; margin-bottom: 40px;">
+              <p style="font-size: 17px; margin-bottom: 0; color: #d4d4d8; line-height: 1.6;">
+                Your email reminder has been successfully scheduled for <strong style="color: #ffffff;">${data.deadlineTitle}</strong> at <strong>${data.institutionName}</strong>.
+              </p>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.03); padding: 24px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px; border-left: 4px solid #ffffff;">
+              <p style="margin: 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #71717a; font-weight: 500;">You'll receive a reminder on</p>
+              <p style="margin: 6px 0 0 0; font-size: 20px; font-weight: 600; color: #fafafa;">${reminderDateFormatted}</p>
+              <p style="margin: 4px 0 0 0; font-size: 14px; color: #71717a;">(${data.reminderDaysBefore} day${data.reminderDaysBefore !== 1 ? 's' : ''} before the deadline)</p>
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.03); padding: 24px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px; border-left: 4px solid #ffffff;">
+              <p style="margin: 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #71717a; font-weight: 500;">Application Deadline</p>
+              <p style="margin: 6px 0 0 0; font-size: 20px; font-weight: 600; color: #fafafa;">${deadlineDate}</p>
             </div>
             
             ${
               data.institutionWebsite
                 ? `
-              <div style="margin: 25px 0;">
-                <a href="${data.institutionWebsite}" style="display: inline-block; background: #667eea; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 500;">Visit Institution Website</a>
+              <div style="margin: 40px 0; text-align: center;">
+                <a href="${data.institutionWebsite}" style="display: inline-block; background: #ffffff; color: #000000; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px; transition: all 0.2s; box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);">Visit Institution Website</a>
               </div>
             `
                 : ''
             }
             
-            <p style="font-size: 14px; color: #6b7280; margin-top: 25px;">
+            <p style="font-size: 14px; color: #71717a; margin-top: 40px; text-align: center;">
               We'll send you a reminder email ${data.reminderDaysBefore} day${data.reminderDaysBefore !== 1 ? 's' : ''} before the deadline to help you stay on track! 📅
             </p>
-          </div>
-          <div style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-            <p style="font-size: 12px; color: #9ca3af; margin-bottom: 8px;">
-              This email was sent from College Application Tracker
-            </p>
-            <p style="font-size: 11px; color: #9ca3af;">
-              You can manage your reminders in your <a href="${appUrl}/dashboard" style="color: #6b7280; text-decoration: underline;">dashboard</a> or 
-              <a href="${appUrl}/reminders/unsubscribe?email=${encodeURIComponent(data.to)}&deadlineId=all" style="color: #6b7280; text-decoration: underline;">unsubscribe from all reminders</a>
-            </p>
+            
+            <div style="margin-top: 50px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center;">
+              <p style="font-size: 12px; color: #52525b; margin-bottom: 12px;">
+                This email was sent from College Application Tracker
+              </p>
+              <p style="font-size: 11px; color: #52525b;">
+                You can manage your reminders in your <a href="${appUrl}/dashboard" style="color: #71717a; text-decoration: underline;">dashboard</a> or 
+                <a href="${appUrl}/reminders/unsubscribe?email=${encodeURIComponent(data.to)}&deadlineId=all" style="color: #71717a; text-decoration: underline;">unsubscribe from all reminders</a>
+              </p>
+            </div>
           </div>
         </body>
       </html>
@@ -261,42 +275,49 @@ export async function sendUnsubscribeConfirmationEmail(
           <meta charset="utf-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
         </head>
-        <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 8px 8px 0 0; text-align: center;">
-            <h1 style="color: white; margin: 0; font-size: 24px;">✓ Unsubscribed</h1>
-          </div>
-          <div style="background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; border: 1px solid #e5e7eb;">
-            <p style="font-size: 16px; margin-bottom: 20px;">
-              You have successfully unsubscribed from ${
-                data.allReminders
-                  ? 'all email reminders'
-                  : `reminders for <strong style="color: #667eea;">${data.deadlineTitle}</strong>`
-              }.
-            </p>
+        <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #d4d4d8; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #000000;">
+          <div style="background: radial-gradient(ellipse at top, #171717, #0a0a0a); padding: 40px 30px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);">
             
-            <div style="background: white; padding: 20px; border-radius: 6px; margin: 20px 0; border-left: 4px solid #10b981;">
-              <p style="margin: 0; font-size: 14px; color: #6b7280;">
-                ${data.allReminders ? 'All reminders have been disabled.' : 'This reminder has been disabled.'}
+            <div style="text-align: center; margin-bottom: 40px;">
+               <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.025em;">
+                Unsubscribed
+              </h1>
+            </div>
+
+            <div style="text-align: center; margin-bottom: 40px;">
+              <p style="font-size: 17px; margin-bottom: 0; color: #d4d4d8; line-height: 1.6;">
+                You have successfully unsubscribed from ${
+                  data.allReminders
+                    ? 'all email reminders'
+                    : `reminders for <strong style="color: #ffffff;">${data.deadlineTitle}</strong>`
+                }.
               </p>
-              <p style="margin: 5px 0 0 0; font-size: 14px; color: #6b7280;">
+            </div>
+
+            <div style="background: rgba(255, 255, 255, 0.03); padding: 24px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px; border-left: 4px solid #ffffff;">
+              <p style="margin: 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #71717a; font-weight: 500;">
+                ${data.allReminders ? 'All reminders have been disabled' : 'This reminder has been disabled'}
+              </p>
+              <p style="margin: 4px 0 0 0; font-size: 15px; color: #d4d4d8;">
                 You will no longer receive email notifications ${
                   data.allReminders ? 'for any deadline reminders.' : 'for this deadline.'
                 }
               </p>
             </div>
             
-            <div style="margin: 25px 0; text-align: center;">
-              <a href="${appUrl}/dashboard" style="display: inline-block; background: #667eea; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: 500;">Manage Reminders in Dashboard</a>
+            <div style="margin: 40px 0; text-align: center;">
+              <a href="${appUrl}/dashboard" style="display: inline-block; background: #ffffff; color: #000000; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px; transition: all 0.2s; box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);">Manage Reminders in Dashboard</a>
             </div>
             
-            <p style="font-size: 14px; color: #6b7280; margin-top: 25px;">
+            <p style="font-size: 14px; color: #71717a; margin-top: 40px; text-align: center;">
               You can always re-enable reminders from your dashboard. We're here to help you stay on top of your deadlines! 📅
             </p>
-          </div>
-          <div style="text-align: center; margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
-            <p style="font-size: 12px; color: #9ca3af;">
-              This email was sent from College Application Tracker
-            </p>
+            
+            <div style="margin-top: 50px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center;">
+              <p style="font-size: 12px; color: #52525b;">
+                This email was sent from College Application Tracker
+              </p>
+            </div>
           </div>
         </body>
       </html>

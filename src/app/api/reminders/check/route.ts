@@ -1,6 +1,5 @@
 import { NextResponse } from 'next/server'
 import { sendReminderEmail } from '@/lib/email'
-import { createSupabaseServerClient } from '@/lib/supabase-server'
 
 /**
  * Endpoint to check and send reminders for a specific user

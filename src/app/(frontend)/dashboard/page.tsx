@@ -24,8 +24,8 @@ export default async function DashboardPage() {
         <div className="absolute bottom-0 left-[20%] h-[500px] w-[500px] rounded-full bg-slate-500/5 blur-[100px]" />
       </div>
 
-      <NavHeader userEmail={user?.email ?? null} />
-      <DashboardContent userEmail={user?.email ?? null} />
+      <NavHeader />
+      <DashboardContent />
     </div>
   )
 }

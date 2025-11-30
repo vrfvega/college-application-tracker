@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, PayloadRequest } from 'payload'
 
 const SUPPORTED_TIMEZONES: string[] = Intl.supportedValuesOf('timeZone') as string[]
 const TIMEZONE_OPTIONS = SUPPORTED_TIMEZONES.map((tz) => ({ label: tz, value: tz }))
@@ -30,7 +30,7 @@ export const Institution: CollectionConfig = {
         originalDoc,
       }: {
         data?: { name?: string; slug?: string }
-        req: any
+        req: PayloadRequest
         originalDoc?: { id?: string; name?: string; slug?: string }
       }) => {
         if (!data) return data
@@ -48,7 +48,6 @@ export const Institution: CollectionConfig = {
         // Ensure uniqueness by checking existing docs with same slug
         // Avoid clashing with the same document on update
         // Note: keep loop bounded in practice; collisions are unlikely
-        // eslint-disable-next-line no-constant-condition
         while (true) {
           const result = await req.payload.find({
             collection: 'institutions',
@@ -57,7 +56,10 @@ export const Institution: CollectionConfig = {
             limit: 1,
           })
           const existing = result?.docs?.[0]
-          if (!existing || (originalDoc && existing.id === originalDoc.id)) {
+          if (
+            !existing ||
+            (originalDoc && String(existing.id) === String(originalDoc.id))
+          ) {
             break
           }
           suffix += 1

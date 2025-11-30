@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
+import { Institution } from '@/payload-types'
 
 export async function GET(request: Request) {
   try {
@@ -37,7 +38,7 @@ export async function GET(request: Request) {
     const institutions = institutionsResults
       .filter((result) => result.status === 'fulfilled')
       .map((result) => {
-        const inst = (result as PromiseFulfilledResult<any>).value
+        const inst = (result as PromiseFulfilledResult<Institution>).value
         return {
           id: inst.id,
           name: inst.name,
