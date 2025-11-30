@@ -152,7 +152,7 @@ export function DashboardContent({ userEmail }: { userEmail?: string | null }) {
             <CardHeader>
               <CardTitle>No Deadlines Found</CardTitle>
               <CardDescription>
-                The institutions you're tracking don't have any deadlines in the system yet. Check back later or
+                The institutions you&apos;re tracking don&apos;t have any deadlines in the system yet. Check back later or
                 contact an administrator.
               </CardDescription>
             </CardHeader>
