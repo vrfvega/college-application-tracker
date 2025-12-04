@@ -38,6 +38,15 @@ interface UnsubscribeConfirmationEmailData {
   allReminders: boolean
 }
 
+interface ScheduleReminderEmailData {
+  to: string
+  deadlineTitle: string
+  institutionName: string
+  deadlineDate: string
+  reminderDaysBefore: number
+  institutionWebsite?: string
+}
+
 // Create Resend client per request for serverless optimization
 // Vercel serverless functions benefit from creating fresh instances
 function getResendClient(): Resend | null {
@@ -154,6 +163,9 @@ export function formatDeadlineDate(dateString: string): string {
  * Sends a confirmation email when a reminder is scheduled
  */
 export async function sendReminderConfirmationEmail(data: ConfirmationEmailData): Promise<boolean> {
+  console.log('=== sendReminderConfirmationEmail called ===')
+  console.log('Data:', JSON.stringify(data, null, 2))
+  
   try {
     const resend = getResendClient()
     if (!resend) {
@@ -162,6 +174,7 @@ export async function sendReminderConfirmationEmail(data: ConfirmationEmailData)
     }
 
     const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
+    console.log('From email:', fromEmail)
     const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://your-app.vercel.app'
     const deadlineDate = formatDeadlineDate(data.deadlineDate)
 
@@ -232,6 +245,7 @@ export async function sendReminderConfirmationEmail(data: ConfirmationEmailData)
       </html>
     `
 
+    console.log('Calling resend.emails.send for confirmation...')
     const { data: emailData, error } = await resend.emails.send({
       from: fromEmail,
       to: data.to,
@@ -240,15 +254,144 @@ export async function sendReminderConfirmationEmail(data: ConfirmationEmailData)
     })
 
     if (error) {
-      console.error('Error sending confirmation email via Resend:', error)
+      console.error('Error sending confirmation email via Resend:', JSON.stringify(error, null, 2))
       return false
     }
 
     console.log('Confirmation email sent successfully:', emailData?.id)
     return true
   } catch (error) {
-    console.error('Error sending confirmation email:', error)
+    console.error('Error sending confirmation email (catch):', error)
     return false
+  }
+}
+
+/**
+ * Schedules a reminder email to be sent at a specific date using Resend's scheduling feature.
+ * The email will be scheduled for 9 AM UTC on the reminder date.
+ */
+export async function scheduleReminderEmail(
+  data: ScheduleReminderEmailData,
+): Promise<{ success: boolean; emailId?: string; scheduledAt?: string; error?: string }> {
+  try {
+    const resend = getResendClient()
+    if (!resend) {
+      console.error('Resend not configured: RESEND_API_KEY is missing')
+      return { success: false, error: 'RESEND_NOT_CONFIGURED' }
+    }
+
+    // Calculate when to send the reminder email
+    // Parse the deadline date - handle both ISO format and YYYY-MM-DD
+    const deadlineDate = new Date(data.deadlineDate)
+    // Set to 9 AM UTC on the deadline day
+    deadlineDate.setUTCHours(9, 0, 0, 0)
+    
+    console.log('Deadline date parsed:', deadlineDate.toISOString())
+    
+    // Calculate reminder date by subtracting days
+    const reminderDate = new Date(deadlineDate)
+    reminderDate.setUTCDate(reminderDate.getUTCDate() - data.reminderDaysBefore)
+    
+    console.log('Reminder date calculated:', reminderDate.toISOString())
+
+    // Check if the reminder date is in the past
+    const now = new Date()
+    if (reminderDate <= now) {
+      return { success: false, error: 'REMINDER_DATE_IN_PAST' }
+    }
+
+    const fromEmail = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
+    const subject = `Reminder: ${data.deadlineTitle} deadline in ${data.reminderDaysBefore} day${data.reminderDaysBefore !== 1 ? 's' : ''}`
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://your-app.vercel.app'
+    const deadlineDateFormatted = formatDeadlineDate(data.deadlineDate)
+
+    const html = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        </head>
+        <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #d4d4d8; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #000000;">
+          <div style="background: radial-gradient(ellipse at top, #171717, #0a0a0a); padding: 40px 30px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1);">
+            
+            <div style="text-align: center; margin-bottom: 40px;">
+               <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 700; letter-spacing: -0.025em;">
+                Application Deadline Reminder
+              </h1>
+            </div>
+
+            <div style="text-align: center; margin-bottom: 40px;">
+              <p style="font-size: 17px; margin-bottom: 0; color: #d4d4d8; line-height: 1.6;">
+                This is a reminder that <strong style="color: #ffffff;">${data.deadlineTitle}</strong> for <strong>${data.institutionName}</strong> is due in <strong style="color: #ffffff;">${data.reminderDaysBefore} day${data.reminderDaysBefore !== 1 ? 's' : ''}</strong>.
+              </p>
+            </div>
+            
+            <div style="background: rgba(255, 255, 255, 0.03); padding: 24px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px; border-left: 4px solid #ffffff;">
+              <p style="margin: 0; font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: #71717a; font-weight: 500;">Deadline Date</p>
+              <p style="margin: 6px 0 0 0; font-size: 20px; font-weight: 600; color: #fafafa;">${deadlineDateFormatted}</p>
+            </div>
+            
+            ${
+              data.institutionWebsite
+                ? `
+              <div style="margin: 40px 0; text-align: center;">
+                <a href="${data.institutionWebsite}" style="display: inline-block; background: #ffffff; color: #000000; padding: 14px 32px; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 15px; transition: all 0.2s; box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);">Visit Institution Website</a>
+              </div>
+            `
+                : ''
+            }
+            
+            <p style="font-size: 14px; color: #71717a; margin-top: 40px; text-align: center;">
+              Don't forget to submit your application on time! Good luck! 🍀
+            </p>
+            
+            <div style="margin-top: 50px; padding-top: 30px; border-top: 1px solid rgba(255,255,255,0.1); text-align: center;">
+              <p style="font-size: 12px; color: #52525b; margin-bottom: 12px;">
+                This email was sent from College Application Tracker
+              </p>
+              <p style="font-size: 11px; color: #52525b;">
+                <a href="${appUrl}/reminders/unsubscribe?email=${encodeURIComponent(data.to)}&deadlineId=${encodeURIComponent(data.deadlineTitle)}" style="color: #71717a; text-decoration: underline;">Unsubscribe from this reminder</a> | 
+                <a href="${appUrl}/dashboard" style="color: #71717a; text-decoration: underline;">Manage all reminders</a>
+              </p>
+            </div>
+          </div>
+        </body>
+      </html>
+    `
+
+    // Use Resend's scheduledAt parameter to schedule the email
+    const scheduledAtISO = reminderDate.toISOString()
+
+    console.log('Scheduling email with Resend:', {
+      from: fromEmail,
+      to: data.to,
+      subject,
+      scheduledAt: scheduledAtISO,
+    })
+
+    const { data: emailData, error } = await resend.emails.send({
+      from: fromEmail,
+      to: data.to,
+      subject,
+      html,
+      scheduledAt: scheduledAtISO,
+    })
+
+    if (error) {
+      console.error('Error scheduling email via Resend:', JSON.stringify(error, null, 2))
+      return { success: false, error: error.message || JSON.stringify(error) }
+    }
+
+    console.log('Email scheduled successfully:', emailData?.id, 'for', scheduledAtISO)
+    return {
+      success: true,
+      emailId: emailData?.id,
+      scheduledAt: scheduledAtISO,
+    }
+  } catch (error) {
+    console.error('Error scheduling reminder email:', error)
+    return { success: false, error: String(error) }
   }
 }
 

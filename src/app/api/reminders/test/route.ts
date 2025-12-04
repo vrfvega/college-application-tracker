@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server'
 import { createSupabaseServerClient } from '@/lib/supabase-server'
-import { sendReminderEmail } from '@/lib/email'
+import { sendReminderEmail, scheduleReminderEmail } from '@/lib/email'
 
 /**
- * Test endpoint to send a reminder email
+ * Test endpoint to send or schedule a reminder email
  * POST /api/reminders/test
- * Body: { deadlineTitle, institutionName, deadlineDate, daysUntil, institutionWebsite? }
+ * Body: { deadlineTitle, institutionName, deadlineDate, daysUntil, institutionWebsite?, schedule?: boolean, reminderDaysBefore?: number }
  */
 export async function POST(request: Request) {
   try {
@@ -19,8 +19,37 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json()
-    const { deadlineTitle, institutionName, deadlineDate, daysUntil, institutionWebsite } = body
+    const { deadlineTitle, institutionName, deadlineDate, daysUntil, institutionWebsite, schedule, reminderDaysBefore } = body
 
+    // If schedule=true, test the scheduling function
+    if (schedule) {
+      if (!deadlineTitle || !institutionName || !deadlineDate || !reminderDaysBefore) {
+        return NextResponse.json(
+          { error: 'Missing required fields for scheduling: deadlineTitle, institutionName, deadlineDate, reminderDaysBefore' },
+          { status: 400 },
+        )
+      }
+
+      const result = await scheduleReminderEmail({
+        to: user.email,
+        deadlineTitle,
+        institutionName,
+        deadlineDate,
+        reminderDaysBefore,
+        institutionWebsite,
+      })
+
+      return NextResponse.json({
+        success: result.success,
+        message: result.success ? 'Email scheduled successfully' : `Failed to schedule: ${result.error}`,
+        email: user.email,
+        scheduledEmailId: result.emailId,
+        scheduledAt: result.scheduledAt,
+        error: result.error,
+      })
+    }
+
+    // Otherwise, send immediately
     if (!deadlineTitle || !institutionName || !deadlineDate || daysUntil === undefined) {
       return NextResponse.json(
         { error: 'Missing required fields: deadlineTitle, institutionName, deadlineDate, daysUntil' },

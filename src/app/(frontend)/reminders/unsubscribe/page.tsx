@@ -51,15 +51,11 @@ function UnsubscribeContent() {
           }
         }
 
-        // Call API to send confirmation email
+        // Call API to send confirmation email using GET (doesn't require auth)
         try {
-          await fetch('/api/reminders/unsubscribe', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              deadlineId,
-              deadlineTitle: allReminders ? undefined : trackedDeadlines.find((d) => d.deadlineId === deadlineId || d.title === deadlineId)?.title,
-            }),
+          const params = new URLSearchParams({ email, deadlineId })
+          await fetch(`/api/reminders/unsubscribe?${params.toString()}`, {
+            method: 'GET',
           })
         } catch (error) {
           console.error('Error sending unsubscribe confirmation:', error)
